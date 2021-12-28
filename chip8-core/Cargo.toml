@@ -1,0 +1,7 @@
+[package]
+name = "chip8-core"
+authors = ["Lleyton van Sambeeck <sceptimis@tuta.io>"]
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
