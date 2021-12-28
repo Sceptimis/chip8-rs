@@ -63,8 +63,18 @@ impl CPU {
         self.pc = PROGRAM_ADDR_START as u16;
     }
 
-    fn fetch_instruction() {
-        unimplemented!();
+    /*
+     * Read instruction that `pc` is pointing to, then increment `pc` by two.
+     */
+    fn fetch_instruction(&mut self) -> u16 {
+        assert!(self.pc <= 4094);
+
+        // Bitshift left, then bitwise OR two successive u8 into a single u16.
+        let pc = self.pc as usize;
+        let opcode = (self.ram[pc] as u16) << 8 | (self.ram[pc + 1] as u16);
+        self.pc += 2;
+
+        opcode
     }
 
     fn execute_instruction() {
