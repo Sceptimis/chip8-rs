@@ -58,8 +58,9 @@ impl CPU {
     /*
      * Programs are loaded into memory starting at address 0x200.
      */
-    fn load_program() {
-        unimplemented!();
+    pub fn load_program(&mut self, prog: &[u8]) {
+        self.ram[PROGRAM_ADDR_START..PROGRAM_ADDR_START + prog.len()].copy_from_slice(&prog);
+        self.pc = PROGRAM_ADDR_START as u16;
     }
 
     fn fetch_instruction() {
