@@ -88,6 +88,43 @@ pub fn decode_instruction(opcode: u16) -> Option<Opcode> {
 
     // Decode opcode.
     match nibble {
-        _ => None,
+        (0x0, 0x0, 0xE, 0x0) => Some(Opcode::Clear),
+        (0x0, 0x0, 0xE, 0xE) => Some(Opcode::Return),
+        (0x1, _, _, _) => Some(Opcode::Jump((opcode & 0x0FFF) as u8)),
+        (0x2, _, _, _) => Some(Opcode::Call((opcode & 0x0FFF) as u8)),
+        (0x3, x, _, _) => Some(Opcode::SkipIfVxEqualsNn(x, (opcode & 0x00FF) as u8)),
+        (0x4, x, _, _) => Some(Opcode::SkipIfVxNotEqualsNn(x, (opcode & 0x00FF) as u8)),
+        (0x5, x, y, 0x0) => Some(Opcode::SkipIfVxEqualsVy(x, y)),
+        (0x6, x, _, _) => Some(Opcode::StoreNnInVx(x, (opcode & 0x00FF) as u8)),
+        (0x7, x, _, _) => Some(Opcode::AddNnToVx(x, (opcode & 0x00FF) as u8)),
+        (0x8, x, y, 0x0) => Some(Opcode::SetVyInVx(x, y)),
+        (0x8, x, y, 0x1) => Some(Opcode::Or(x, y)),
+        (0x8, x, y, 0x2) => Some(Opcode::And(x, y)),
+        (0x8, x, y, 0x3) => Some(Opcode::Xor(x, y)),
+        (0x8, x, y, 0x4) => Some(Opcode::Add(x, y)),
+        (0x8, x, y, 0x5) => Some(Opcode::Sub(x, y)),
+        (0x8, x, y, 0x6) => Some(Opcode::ShiftRight(x, y)),
+        (0x8, x, y, 0x7) => Some(Opcode::ReverseSub(x, y)),
+        (0x8, x, y, 0xE) => Some(Opcode::ShiftLeft(x, y)),
+        (0x9, x, y, 0x0) => Some(Opcode::SkipIfVxNotEqualsVy(x, y)),
+        (0xA, _, _, _) => Some(Opcode::StoreNnnInI((opcode & 0x0FFF) as u8)),
+        (0xB, _, _, _) => Some(Opcode::JumpAddV0((opcode & 0x0FFF) as u8)),
+        (0xC, x, _, _) => Some(Opcode::SetVxRand(x, (opcode & 0x00FF) as u8)),
+        (0xD, x, y, n) => Some(Opcode::DrawSprite(x, y, n)),
+        (0xE, x, 0x9, 0xE) => Some(Opcode::SkipIfKeyDown(x)),
+        (0xE, x, 0xA, 0x1) => Some(Opcode::SkipIfKeyNotDown(x)),
+        (0xF, x, 0x0, 0x7) => Some(Opcode::StoreDelayInVx(x)),
+        (0xF, x, 0x0, 0xA) => Some(Opcode::WaitKeyDownStore(x)),
+        (0xF, x, 0x1, 0x5) => Some(Opcode::SetDelayToVx(x)),
+        (0xF, x, 0x1, 0x8) => Some(Opcode::SetSoundToVx(x)),
+        (0xF, x, 0x1, 0xE) => Some(Opcode::AddVxToI(x)),
+        (0xF, x, 0x2, 0x9) => Some(Opcode::SetSpriteIFromVx(x)),
+        (0xF, x, 0x3, 0x3) => Some(Opcode::StoreBCD(x)),
+        (0xF, x, 0x3, 0x3) => Some(Opcode::CopyRegisters(x)),
+        (0xF, x, 0x3, 0x3) => Some(Opcode::FillRegisters(x)),
+        _ => {
+            println!("Opcode {} not implemented", opcode);
+            None
+        }
     }
 }
