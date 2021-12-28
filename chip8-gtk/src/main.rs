@@ -1,3 +1,4 @@
+use chip8_core::cpu::CPU;
 use std::env::args;
 use std::fs::File;
 use std::io::Read;
@@ -12,4 +13,10 @@ fn main() {
         .expect("error while reading");
 
     println!("File loaded: {}", file_name);
+    println!("File size: {} bytes", &buffer.len());
+
+    let mut c8 = CPU::new();
+    c8.load_program(buffer.as_ref());
+
+    // TODO: main loop logic
 }
